@@ -1,4 +1,25 @@
 source "https://rubygems.org"
+# Gemfile (additions/changes)
+
+
+gem "acts_as_tenant"
+gem "happy_gemfile"
+gem "annotate"
+
+gem "devise"
+gem "devise-jwt"
+gem "pundit"
+
+gem "geocoder"
+
+gem "redis"
+
+gem "stripe"
+
+gem "jbuilder"
+
+gem "ransack"
+
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.2.2", ">= 7.2.2.1"
@@ -13,7 +34,6 @@ gem "puma", ">= 5.0"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
-
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
@@ -32,12 +52,11 @@ gem "bootsnap", require: false
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "faker"
 
-  # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
 
-  # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
 end
-
-
