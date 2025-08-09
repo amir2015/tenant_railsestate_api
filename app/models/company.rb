@@ -24,7 +24,7 @@ class Company < ApplicationRecord
 
   before_validation :downcase_subdomain
 
-  act_as_tenant :self
+  acts_as_tenant :self
 
   private
 
