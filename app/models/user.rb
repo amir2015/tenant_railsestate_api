@@ -33,7 +33,7 @@ class User < ApplicationRecord
   enum role: { agent: 0, team_lead: 1, company_admin: 2, client: 3 }
 
   belongs_to :company, optional: false
-  acts_as_tenant(:company,optional:true)
+  acts_as_tenant(:company, optional: true)
 
   def full_name
     "#{first_name} #{last_name}".strip

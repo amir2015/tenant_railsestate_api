@@ -8,7 +8,6 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 company = Company.find_or_create_by!(subdomain: "acme") do |c|
-
   c.name = "Acme Corp"
 end
 
