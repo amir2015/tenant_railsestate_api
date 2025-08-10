@@ -24,18 +24,17 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
-
-  belongs_to :company
+          :recoverable, :rememberable, :validatable,
+          :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Denylist
 
   validates :first_name, :last_name, presence: true
   validates :role, presence: true
   validates :email, uniqueness: { scope: :company_id }
-
   enum role: { agent: 0, team_lead: 1, company_admin: 2, client: 3 }
 
-  act_as_tenant :company
-  
+  belongs_to :company, optional: false
+  acts_as_tenant(:company,optional:true)
+
   def full_name
     "#{first_name} #{last_name}".strip
   end
