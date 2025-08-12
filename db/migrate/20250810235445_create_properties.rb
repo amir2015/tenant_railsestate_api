@@ -26,8 +26,7 @@ class CreateProperties < ActiveRecord::Migration[7.2]
 
       t.timestamps
     end
-    add_index :properties, :company_id
-    add_index :properties, :agent_id
+
     add_index :properties, :status
     add_index :properties, [:lat, :lng]
     add_index :properties, :price
