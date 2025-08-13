@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::API
   before_action :set_current_tenant
-
+  
   private
 
   def set_current_tenant
