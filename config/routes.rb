@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       namespace :v1 do
         get '/companies/current', to: 'companies#show'
         patch '/companies/current', to: 'companies#update'
+        resources :properties 
       end
     end
   end

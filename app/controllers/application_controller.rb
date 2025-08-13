@@ -1,7 +1,41 @@
 class ApplicationController < ActionController::API
+  include Devise::Controllers::Helpers
+  include ActionController::MimeResponds
   before_action :set_current_tenant
-  
+  before_action :authenticate_user_from_token!
+
   private
+
+  def authenticate_user_from_token!
+    token = extract_token_from_request
+    unless token && current_user_from_token(token)
+      render json: { error: "Unauthorized" }, status: :unauthorized
+    end
+  end
+
+  def current_user
+    @current_user ||= current_user_from_token(extract_token_from_request)
+  end
+
+  def extract_token_from_request
+    auth_header = request.headers["Authorization"]
+    auth_header&.split(" ")&.last if auth_header&.start_with?("Bearer ")
+  end
+
+  def current_user_from_token(token)
+    return unless token
+
+    begin
+      decoded_payload = JWT.decode(token, ENV["JWT_SECRET_KEY"], true, { algorithm: 'HS256' })
+      payload = decoded_payload[0]
+
+      return nil if JwtDenylist.exists?(jti: payload['jti'])
+
+      User.find_by(id: payload['sub'])
+    rescue JWT::DecodeError, ActiveRecord::RecordNotFound
+      nil
+    end
+  end
 
   def set_current_tenant
     tenant = find_tenant
@@ -42,4 +76,5 @@ class ApplicationController < ActionController::API
   def find_tenant_by_param
     Company.find_by(id: params[:tenant_id])
   end
+
 end

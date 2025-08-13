@@ -136,7 +136,7 @@ users_data.each do |user_data|
   company = companies[user_data[:company_subdomain]]
   next unless company
 
-  # Set tenant context for this company
+  
   ActsAsTenant.with_tenant(company) do
     user = User.find_or_create_by(email: user_data[:email]) do |u|
       u.password = user_data[:password]
