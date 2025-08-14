@@ -1,22 +1,18 @@
 class Api::V1::PropertiesController < ApplicationController
   before_action :authenticate_user_from_token!
-  before_action :set_property, only: [:show, :update, :destroy]
+  before_action :set_property, only: [:show, :update, :destroy,:add_images]
 
-  def search
-    @q=Property.ransnack(search_params)
-    @properties=@q.result(distinct: true)
-    render json: @properties
-  end
 
   def index
     @properties = Property.all
     render json: @properties
-
-
   end
 
   def show
-    render json: @property
+    render json: {
+    property:  @property,
+    images: @property.images.map { |image| { url: url_for(image) } }
+    }
   end
 
   def create
@@ -43,10 +39,29 @@ class Api::V1::PropertiesController < ApplicationController
     head :no_content
   end
 
+  def search
+    @q=Property.ransack(search_params)
+    @properties=@q.result(distinct: true)
+    render json: @properties
+  end
+
+  def add_images
+    if params[:images].present?
+      @property.images.attach(params[:images])
+      if @property.save
+        render json: { message: "Images added successfully" }, status: :ok
+      else
+        render json: @property.errors, status: :unprocessable_entity
+      end
+    else
+      render json: { error: "No images provided" }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def search_params
-    params.require(:q).permit! if params[:q]
+    params.fetch(:q, {}).permit(:title_cont, :city_eq, :price_gteq, :price_lteq, :property_type_eq, :bedrooms_gteq,:state_eq)
   end
 
   def set_property
@@ -58,13 +73,15 @@ class Api::V1::PropertiesController < ApplicationController
   def property_params
     params.require(:property).permit(:title, :description, :property_type, :listing_type, :price,
     :address, :city, :state, :zip_code, :country,:lat, :lng,
-    :bedrooms, :bathrooms, :square_feet, :lot_size, :year_built,
+    :bedrooms, :bathrooms, :square_feet, :lot_size, :year_built,:images,
     :status, :featured)
   end
+
   def authenticate_user!
     unless current_user
       render json: { error: "Unauthorized" }, status: :unauthorized
       return
     end
   end
+
 end
