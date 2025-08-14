@@ -5,6 +5,8 @@ class Api::V1::PropertiesController < ApplicationController
   def index
     @properties = Property.all
     render json: @properties
+
+
   end
 
   def show
@@ -44,10 +46,10 @@ class Api::V1::PropertiesController < ApplicationController
   end
 
   def property_params
-  params.require(:property).permit(:title, :description, :property_type, :listing_type, :price,
-  :address, :city, :state, :zip_code, :country,
-  :bedrooms, :bathrooms, :square_feet, :lot_size, :year_built,
-  :status, :featured)
+    params.require(:property).permit(:title, :description, :property_type, :listing_type, :price,
+    :address, :city, :state, :zip_code, :country,
+    :bedrooms, :bathrooms, :square_feet, :lot_size, :year_built,
+    :status, :featured)
   end
   def authenticate_user!
     unless current_user

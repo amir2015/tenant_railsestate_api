@@ -132,11 +132,12 @@ users_data = [
     license_number: "DM001"
   }
 ]
+users={}
 users_data.each do |user_data|
   company = companies[user_data[:company_subdomain]]
   next unless company
 
-  
+
   ActsAsTenant.with_tenant(company) do
     user = User.find_or_create_by(email: user_data[:email]) do |u|
       u.password = user_data[:password]
@@ -157,25 +158,131 @@ users_data.each do |user_data|
     end
   end
 end
+property_types = ["Single Family", "Condo", "Townhouse", "Apartment", "Land"]
+listing_types = ["buy", "rent", "sell"]
+statuses = ["active", "pending", "sold", "rented", "withdrawn", "draft"]
+
+# ACME Properties (New York)
+ActsAsTenant.with_tenant(companies["acme"]) do
+  ny_neighborhoods = ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island"]
+  acme_agents = User.where(company: companies["acme"], role: "agent").to_a
+  next if acme_agents.empty?
+  15.times do |i|
+    property = Property.create!(
+      title: "#{["Luxury", "Modern", "Cozy", "Spacious", "Charming"].sample} #{["Home", "Apartment", "Residence", "Loft"].sample} in #{ny_neighborhoods.sample}",
+      description: "#{["Beautiful", "Stunning", "Recently renovated", "Well-maintained"].sample} #{property_types.sample} with #{["great views", "modern amenities", "historic charm", "a spacious layout"].sample}. #{["Close to public transportation.", "Walking distance to shops and restaurants.", "In a quiet neighborhood.", "Perfect for families."].sample}",
+      property_type: property_types.sample,
+      listing_type: listing_types.sample,
+      price: rand(300000..5000000),
+      address: "#{rand(1..999)} #{["Main", "Broadway", "Park", "5th", "Lexington"].sample} #{["St", "Ave", "Blvd", "Dr"].sample}",
+      city: "New York",
+      state: "NY",
+      zip_code: ["10001", "10016", "11201", "10453"].sample,
+      country: "USA",
+      bedrooms: rand(1..5),
+      bathrooms: rand(1..4),
+      square_feet: rand(800..4000),
+      lot_size: rand(0.1..1.0).round(1),
+      year_built: rand(1901..2020),
+      status: statuses.sample,
+      featured: [true, false].sample,
+      agent: acme_agents.sample,
+
+
+    )
+    puts "✓ Created ACME property: #{property.title}"
+  end
+end
+
+# Sunshine Properties (Los Angeles)
+ActsAsTenant.with_tenant(companies["sunshine"]) do
+  sunshine_agents = User.where(company: companies["sunshine"], role: "agent").to_a
+  next if sunshine_agents.empty?
+  la_neighborhoods = ["Hollywood", "Beverly Hills", "Santa Monica", "Downtown", "Venice"]
+
+  10.times do |i|
+    property = Property.create!(
+      title: "#{["Sunny", "Stylish", "Contemporary", "Elegant", "Private"].sample} #{["Home", "Villa", "Condo", "Bungalow"].sample} in #{la_neighborhoods.sample}",
+      description: "#{["Gorgeous", "Bright", "Recently updated", "Architecturally significant"].sample} #{property_types.sample} featuring #{["an open floor plan", "high ceilings", "a gourmet kitchen", "a private yard"].sample}. #{["Near the beach.", "Walking distance to nightlife.", "In a prestigious school district.", "With amazing city views."].sample}",
+      property_type: property_types.sample,
+      listing_type: listing_types.sample,
+      price: rand(500000..8000000),
+      address: "#{rand(1..999)} #{["Sunset", "Wilshire", "Melrose", "Hollywood", "Santa Monica"].sample} #{["Blvd", "Ave", "St", "Dr"].sample}",
+      city: "Los Angeles",
+      state: "CA",
+      zip_code: ["90028", "90210", "90403", "90015"].sample,
+      country: "USA",
+      bedrooms: rand(1..6),
+      bathrooms: rand(1..5),
+      square_feet: rand(1000..5000),
+      lot_size: rand(0.2..2.0).round(1),
+      year_built: rand(1920..2020),
+      status: statuses.sample,
+      featured: [true, false].sample,
+      agent: sunshine_agents.sample
+    )
+    puts "✓ Created Sunshine property: #{property.title}"
+  end
+end
+
+# Demo Properties (Chicago)
+ActsAsTenant.with_tenant(companies["demo"]) do
+  chicago_neighborhoods = ["Loop", "Lincoln Park", "Wicker Park", "Gold Coast", "Hyde Park"]
+
+  5.times do |i|
+    property = Property.create!(
+      title: "#{["Classic", "Urban", "Renovated", "Historic", "Stylish"].sample} #{["Apartment", "Townhouse", "Loft", "Penthouse"].sample} in #{chicago_neighborhoods.sample}",
+      description: "#{["Wonderful", "Sophisticated", "Recently remodeled", "Full of character"].sample} #{property_types.sample} with #{["exposed brick", "hardwood floors", "panoramic windows", "a chef's kitchen"].sample}. #{["Steps from public transit.", "Close to downtown.", "In a vibrant community.", "With easy lake access."].sample}",
+      property_type: property_types.sample,
+      listing_type: listing_types.sample,
+      price: rand(200000..3000000),
+      address: "#{rand(1..999)} #{["Michigan", "State", "Clark", "Dearborn", "Rush"].sample} #{["Ave", "St", "Blvd", "Dr"].sample}",
+      city: "Chicago",
+      state: "IL",
+      zip_code: ["60601", "60610", "60614", "60654"].sample,
+      country: "USA",
+      bedrooms: rand(1..4),
+      bathrooms: rand(1..3),
+      square_feet: rand(700..3000),
+      lot_size: rand(0.1..0.5).round(1),
+      year_built: rand(1910..2020),
+      status: statuses.sample,
+      featured: [true, false].sample,
+      agent: nil
+    )
+    puts "✓ Created Demo property: #{property.title}"
+  end
+end
 
 puts "\n Seed completed!"
 puts "\n Summary:"
 puts "Companies: #{Company.count}"
 companies.each do |subdomain, company|
   ActsAsTenant.with_tenant(company) do
-    puts "  #{company.name} (#{subdomain}): #{User.count} users"
+    user_count = User.count
+    property_count = Property.count
+    puts "  #{company.name} (#{subdomain}): #{user_count} users, #{property_count} properties"
   end
 end
 
-puts "\n Test Credentials:"
+puts "\nTest Credentials:"
 puts "ACME Real Estate (http://acme.lvh.me:3000):"
 puts "  admin@acme.com / securepassword123 (Company Admin)"
 puts "  john@acme.com / password123 (Team Lead)"
 puts "  jane@acme.com / password123 (Agent)"
+ActsAsTenant.with_tenant(companies["acme"]) do
+  puts "  #{Property.count} properties"
+end
 
 puts "\nSunshine Properties (http://sunshine.lvh.me:3000):"
 puts "  admin@sunshine.com / securepassword123 (Company Admin)"
 puts "  mike@sunshine.com / password123 (Agent)"
+ActsAsTenant.with_tenant(companies["sunshine"]) do
+  puts "  #{Property.count} properties"
+end
 
 puts "\nDemo Real Estate (http://demo.lvh.me:3000):"
 puts "  admin@demo.com / securepassword123 (Company Admin)"
+ActsAsTenant.with_tenant(companies["demo"]) do
+  puts "  #{Property.count} properties"
+end
