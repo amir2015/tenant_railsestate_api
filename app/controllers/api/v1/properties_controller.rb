@@ -16,7 +16,7 @@ class Api::V1::PropertiesController < ApplicationController
   def create
     @property = Property.new(property_params)
     @property.company = current_user.company
-    @property.agent = current_user if current_user.has_role?(:agent)
+    @property.agent = current_user if current_user.role=="agent"
       if @property.save
         render json: @property, status: :created
       else
@@ -47,7 +47,7 @@ class Api::V1::PropertiesController < ApplicationController
 
   def property_params
     params.require(:property).permit(:title, :description, :property_type, :listing_type, :price,
-    :address, :city, :state, :zip_code, :country,
+    :address, :city, :state, :zip_code, :country,:lat, :lng,
     :bedrooms, :bathrooms, :square_feet, :lot_size, :year_built,
     :status, :featured)
   end
