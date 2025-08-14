@@ -1,18 +1,11 @@
 class Api::V1::PropertiesController < ApplicationController
   before_action :authenticate_user_from_token!
-  before_action :set_property, only: [:show, :update, :destroy]
+  before_action :set_property, only: [:show, :update, :destroy,:add_images]
 
-  def search
-    @q=Property.ransnack(search_params)
-    @properties=@q.result(distinct: true)
-    render json: @properties
-  end
 
   def index
     @properties = Property.all
     render json: @properties
-
-
   end
 
   def show
@@ -42,11 +35,19 @@ class Api::V1::PropertiesController < ApplicationController
     @property.destroy
     head :no_content
   end
+  def search
+    @q=Property.ransack(search_params)
+    @properties=@q.result(distinct: true)
+    render json: @properties
+  end
 
+  def add_images
+
+  end
   private
 
   def search_params
-    params.require(:q).permit! if params[:q]
+    params.fetch(:q, {}).permit(:title_cont, :city_eq, :price_gteq, :price_lteq, :property_type_eq, :bedrooms_gteq,:state_eq)
   end
 
   def set_property

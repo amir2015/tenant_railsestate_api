@@ -3,6 +3,7 @@ class Property < ApplicationRecord
   #Associations
   belongs_to :company
   belongs_to :agent, class_name: "User", foreign_key: "agent_id", optional: true
+  has_many_attached :images
 
   #Validations
   validates :listing_type, inclusion: { in: %w[buy rent sell] }
@@ -20,7 +21,7 @@ class Property < ApplicationRecord
 
   geocoded_by :full_address
   after_validation :geocode, if:  ->(obj) { obj.address.present? && (obj.address_changed? || obj.city_changed? || obj.state_changed? || obj.zip_code_changed?) }
-  
+
   #Methods
   def full_address
     [address, city, state, zip_code, country].compact.join(", ")
@@ -29,4 +30,17 @@ class Property < ApplicationRecord
   def to_s
     title.presence || "Property #{id}"
   end
+  #Search Functionality
+  def self.ransackable_attributes(auth_object = nil)
+    %w[
+      address agent_id bathrooms bedrooms city company_id country
+      created_at description featured id lat listing_type lng
+      lot_size price property_type square_feet state status title
+      updated_at year_built zip_code
+    ]
+  end
+  def self.ransackable_associations(auth_object = nil)
+    [] 
+  end
+
 end
