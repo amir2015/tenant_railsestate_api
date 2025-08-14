@@ -2,6 +2,12 @@ class Api::V1::PropertiesController < ApplicationController
   before_action :authenticate_user_from_token!
   before_action :set_property, only: [:show, :update, :destroy]
 
+  def search
+    @q=Property.ransnack(search_params)
+    @properties=@q.result(distinct: true)
+    render json: @properties
+  end
+
   def index
     @properties = Property.all
     render json: @properties
@@ -38,6 +44,10 @@ class Api::V1::PropertiesController < ApplicationController
   end
 
   private
+
+  def search_params
+    params.require(:q).permit! if params[:q]
+  end
 
   def set_property
     @property = Property.find(params[:id])
