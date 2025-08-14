@@ -2,7 +2,7 @@ class ApplicationController < ActionController::API
   include Devise::Controllers::Helpers
   include ActionController::MimeResponds
   before_action :set_current_tenant
-  before_action :authenticate_user_from_token!
+  before_action :authenticate_user_from_token!,except: [:create]
 
   private
 

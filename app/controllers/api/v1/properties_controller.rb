@@ -9,7 +9,10 @@ class Api::V1::PropertiesController < ApplicationController
   end
 
   def show
-    render json: @property
+    render json: {
+    property:  @property,
+    images: @property.images.map { |image| { url: url_for(image) } }
+    }
   end
 
   def create
@@ -35,6 +38,7 @@ class Api::V1::PropertiesController < ApplicationController
     @property.destroy
     head :no_content
   end
+
   def search
     @q=Property.ransack(search_params)
     @properties=@q.result(distinct: true)
@@ -42,8 +46,18 @@ class Api::V1::PropertiesController < ApplicationController
   end
 
   def add_images
-
+    if params[:images].present?
+      @property.images.attach(params[:images])
+      if @property.save
+        render json: { message: "Images added successfully" }, status: :ok
+      else
+        render json: @property.errors, status: :unprocessable_entity
+      end
+    else
+      render json: { error: "No images provided" }, status: :unprocessable_entity
+    end
   end
+
   private
 
   def search_params
@@ -59,13 +73,15 @@ class Api::V1::PropertiesController < ApplicationController
   def property_params
     params.require(:property).permit(:title, :description, :property_type, :listing_type, :price,
     :address, :city, :state, :zip_code, :country,:lat, :lng,
-    :bedrooms, :bathrooms, :square_feet, :lot_size, :year_built,
+    :bedrooms, :bathrooms, :square_feet, :lot_size, :year_built,:images,
     :status, :featured)
   end
+
   def authenticate_user!
     unless current_user
       render json: { error: "Unauthorized" }, status: :unauthorized
       return
     end
   end
+
 end

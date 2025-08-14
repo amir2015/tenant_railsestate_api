@@ -26,6 +26,9 @@ Rails.application.routes.draw do
         collection do
           get :search
         end
+        member do
+          post :images, to: 'properties#add_images'
+        end
         end
       end
     end
