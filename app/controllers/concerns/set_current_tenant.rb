@@ -1,5 +1,6 @@
 module SetCurrentTenant
   extend ActiveSupport::Concern
+
   included do
     before_action :set_current_tenant
   end
@@ -8,9 +9,8 @@ module SetCurrentTenant
 
   def set_current_tenant
     subdomain = request.subdomain
-    if subdomain.blank? || subdomain.downcase == "www"
-      return
-    end
+    return if subdomain.blank? || subdomain.downcase == "www"
+
     company = Company.find_by(subdomain: subdomain)
     if company
       ActAsTenant.current_tenant = company

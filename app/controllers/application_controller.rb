@@ -1,16 +1,17 @@
 class ApplicationController < ActionController::API
   include Devise::Controllers::Helpers
   include ActionController::MimeResponds
+
   before_action :set_current_tenant
-  before_action :authenticate_user_from_token!,except: [:create]
+  before_action :authenticate_user_from_token!, except: [:create]
 
   private
 
   def authenticate_user_from_token!
     token = extract_token_from_request
-    unless token && current_user_from_token(token)
-      render json: { error: "Unauthorized" }, status: :unauthorized
-    end
+    return if token && current_user_from_token(token)
+
+    render json: { error: "Unauthorized" }, status: :unauthorized
   end
 
   def current_user
@@ -19,14 +20,14 @@ class ApplicationController < ActionController::API
 
   def extract_token_from_request
     auth_header = request.headers["Authorization"]
-    auth_header&.split(" ")&.last if auth_header&.start_with?("Bearer ")
+    auth_header&.chars&.last if auth_header&.start_with?("Bearer ")
   end
 
   def current_user_from_token(token)
     return unless token
 
     begin
-      decoded_payload = JWT.decode(token, ENV["JWT_SECRET_KEY"], true, { algorithm: 'HS256' })
+      decoded_payload = JWT.decode(token, ENV.fetch("JWT_SECRET_KEY", nil), true, { algorithm: 'HS256' })
       payload = decoded_payload[0]
 
       return nil if JwtDenylist.exists?(jti: payload['jti'])
@@ -53,7 +54,7 @@ class ApplicationController < ActionController::API
           available_tenants: Company.pluck(:id)
         }
       }, status: :bad_request
-      return
+      nil
     end
   end
 
@@ -76,5 +77,4 @@ class ApplicationController < ActionController::API
   def find_tenant_by_param
     Company.find_by(id: params[:tenant_id])
   end
-
 end

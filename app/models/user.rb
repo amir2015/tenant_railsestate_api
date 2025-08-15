@@ -30,7 +30,7 @@ class User < ApplicationRecord
   validates :first_name, :last_name, presence: true
   validates :role, presence: true
   validates :email, uniqueness: { scope: :company_id }
-  enum :role, { :agent => 0, :team_lead => 1, :company_admin => 2, :client => 3 }
+  enum :role, { agent: 0, team_lead: 1, company_admin: 2, client: 3 }
   belongs_to :company, optional: false
   acts_as_tenant(:company, optional: true)
 
@@ -40,7 +40,7 @@ class User < ApplicationRecord
 
   def jwt_payload
     super.merge(
-      role: role,
+      role: role
     )
   end
 end

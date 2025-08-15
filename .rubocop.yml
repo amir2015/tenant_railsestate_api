@@ -1,10 +1,60 @@
-# Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+# .rubocop.yml
+AllCops:
+  TargetRubyVersion: 3.2.2
+  NewCops: enable
+  Exclude:
+    - 'bin/**/*'
+    - 'db/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+# Omakase-inspired settings
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+# Your custom overrides
 Style/StringLiterals:
-Enabled: false
+  Enabled: false
+
+Style/Sample:
+  Enabled: false
+
+Layout/LineLength:
+  Enabled: false
+
+Layout/EmptyLines:
+  Enabled: false
+
+
+Bundler/OrderedGems:
+  Enabled: false
+
+Style/RedundantReturn:
+  Enabled: false
+
+Style/EmptyMethod:
+  Enabled: false
+
+Layout/EmptyLineBetweenDefs:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Layout/HashAlignment:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Lint/EmptyBlock:
+  Enabled: false

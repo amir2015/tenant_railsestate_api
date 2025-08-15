@@ -10,7 +10,7 @@ module RailsestateApi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.2
-    session_secret = ENV['JWT_SECRET_KEY']
+    session_secret = ENV.fetch('JWT_SECRET_KEY', nil)
     config.session_store :cookie_store, key: "session", secret: session_secret
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do

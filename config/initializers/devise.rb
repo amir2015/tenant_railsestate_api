@@ -16,18 +16,17 @@ Devise.setup do |config|
   # by default. You can change it below and use your own secret key.
   # config.secret_key = '28b85d4fcf7add8863b0d98ced83fbe5384abdbca3d0b7e0b7c25d4633157addc3ea3004b99ffbdcfdaed4ecb63b155e067223dddc5047c7d508d72d2668047c'
   config.jwt do |jwt|
-    jwt.secret = ENV['JWT_SECRET_KEY']
+    jwt.secret = ENV.fetch('JWT_SECRET_KEY', nil)
     jwt.expiration_time = 1.day.to_i
 
     jwt.dispatch_requests = [
       ["POST", %r{^/api/v1/auth/sign_up$}],
       ['POST', %r{^/api/v1/auth/login$}]
     ]
-      jwt.revocation_requests = [
-        ['DELETE', %r{^/api/v1/auth/logout$}]
-      ]
-      jwt.expiration_time = 1.day.to_i
-
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/api/v1/auth/logout$}]
+    ]
+    jwt.expiration_time = 1.day.to_i
   end
 
   # ==> Controller configuration

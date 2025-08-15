@@ -14,7 +14,7 @@ module Api
         if resource.persisted?
           render json: {
             status: { code: 200, message: 'Registered successfully.' },
-            data:   UserSerializer.new(resource).serializable_hash[:data][:attributes]
+            data: UserSerializer.new(resource).serializable_hash[:data][:attributes]
           }, status: :ok
         else
           render json: {

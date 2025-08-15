@@ -29,7 +29,6 @@ class Company < ApplicationRecord
 
   before_validation :downcase_subdomain
 
-
   private
 
   def downcase_subdomain

@@ -8,11 +8,11 @@ class Api::V1::SessionsController < ApplicationController
       token = generate_jwt_for_user(user)
       render json: {
         status: { code: 200, message: "Logged in successfully." },
-        data: { user: user, token: token },
+        data: { user: user, token: token }
       }, status: :ok
     else
       render json: {
-        status: { code: 401, message: "Invalid email or password." },
+        status: { code: 401, message: "Invalid email or password." }
       }, status: :unauthorized
     end
   end
@@ -22,11 +22,11 @@ class Api::V1::SessionsController < ApplicationController
     if token
       revoke_token(token)
       render json: {
-        status: { code: 200, message: "Logged out successfully." },
+        status: { code: 200, message: "Logged out successfully." }
       }, status: :ok
     else
       render json: {
-        status: { code: 401, message: "User was not logged in." },
+        status: { code: 401, message: "User was not logged in." }
       }, status: :unauthorized
     end
   end
@@ -40,8 +40,8 @@ class Api::V1::SessionsController < ApplicationController
       role: user.role,
       iat: Time.current.to_i,
       exp: 24.hours.from_now.to_i,
-      jti: SecureRandom.uuid,
+      jti: SecureRandom.uuid
     }
-    JWT.encode(payload, ENV["JWT_SECRET_KEY"], "HS256")
+    JWT.encode(payload, ENV.fetch("JWT_SECRET_KEY", nil), "HS256")
   end
 end

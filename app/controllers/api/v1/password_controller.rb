@@ -10,7 +10,6 @@ module Api
         request.env['devise.mapping'] = Devise.mappings[:user]
       end
 
-
       def create
         user = User.find_by(email: params[:email])
 
@@ -22,14 +21,14 @@ module Api
         end
       end
 
-
       def update
         user = User.reset_password_by_token(reset_password_params)
 
         if user.errors.empty?
           render json: { status: { code: 200, message: 'Password updated successfully.' } }, status: :ok
         else
-          render json: { status: { code: 422, message: 'Password update failed.', errors: user.errors.full_messages } }, status: :unprocessable_entity
+          render json: { status: { code: 422, message: 'Password update failed.', errors: user.errors.full_messages } },
+                 status: :unprocessable_entity
         end
       end
 
