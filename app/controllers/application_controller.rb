@@ -20,7 +20,7 @@ class ApplicationController < ActionController::API
 
   def extract_token_from_request
     auth_header = request.headers["Authorization"]
-    auth_header&.split("")&.last if auth_header&.start_with?("Bearer ")
+    auth_header&.chars&.last if auth_header&.start_with?("Bearer ")
   end
 
   def current_user_from_token(token)

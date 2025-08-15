@@ -19,9 +19,7 @@ Style/ClassAndModuleChildren:
   Enabled: false
 
 Metrics/BlockLength:
-  Exclude:
-    - 'config/routes.rb'
-    - 'spec/**/*'
+  Enabled: false
 
 # Your custom overrides
 Style/StringLiterals:
@@ -31,14 +29,11 @@ Style/Sample:
   Enabled: false
 
 Layout/LineLength:
-  Max: 120
-  AllowHeredoc: true
-  AllowURI: true
+  Enabled: false
+
 Layout/EmptyLines:
   Enabled: false
 
-Layout/LineLength:
-  Enabled: false
 
 Bundler/OrderedGems:
   Enabled: false
@@ -60,11 +55,6 @@ Layout/HashAlignment:
 
 Metrics/MethodLength:
   Enabled: false
-
-Metrics/BlockLength:
-  Exclude:
-    - 'config/initializers/devise.rb'
-    - 'spec/**/*'
 
 Lint/EmptyBlock:
   Enabled: false
