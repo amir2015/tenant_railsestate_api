@@ -1,6 +1,6 @@
 class Api::V1::CompaniesController < ApplicationController
   def show
-    return render json: { message: "No current tenant" }, status: :not_found unless current_tenant
+    render json: { message: "No current tenant" }, status: :not_found unless current_tenant
 
     #   company = current_tenant
     #   render json: company, status: :ok
@@ -11,8 +11,7 @@ class Api::V1::CompaniesController < ApplicationController
     #   render json: { error: "Internal server error" }, status: :internal_server_error
   end
 
-  def update
-  end
+  def update; end
 
   def register
     # subdomain = request.subdomain

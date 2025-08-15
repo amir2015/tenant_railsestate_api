@@ -2,8 +2,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       devise_for :users,
-                skip: :all,
-                defaults: { format: :json }
+                 skip: :all,
+                 defaults: { format: :json }
 
       devise_scope :user do
         post '/auth/login', to: 'sessions#create'
@@ -23,12 +23,12 @@ Rails.application.routes.draw do
         get '/companies/current', to: 'companies#show'
         patch '/companies/current', to: 'companies#update'
         resources :properties do
-        collection do
-          get :search
-        end
-        member do
-          post :images, to: 'properties#add_images'
-        end
+          collection do
+            get :search
+          end
+          member do
+            post :images, to: 'properties#add_images'
+          end
         end
       end
     end
