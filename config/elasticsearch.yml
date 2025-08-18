@@ -1,0 +1,12 @@
+# config/elasticsearch.yml
+development:
+  url: http://localhost:9200
+
+
+test:
+  url: http://localhost:9200
+
+
+production:
+  url: <%= ENV['ELASTICSEARCH_URL'] %>
+

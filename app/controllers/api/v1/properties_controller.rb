@@ -10,7 +10,7 @@ class Api::V1::PropertiesController < ApplicationController
   def show
     render json: {
       property: @property,
-      images: @property.images.map { |image| { url: url_for(image) } }
+      images: @property.images.map { |image| { url: url_for(image) } },
     }
   end
 
@@ -39,9 +39,20 @@ class Api::V1::PropertiesController < ApplicationController
   end
 
   def search
-    @q = Property.ransack(search_params)
-    @properties = @q.result(distinct: true)
-    render json: @properties
+    # @q = Property.ransack(search_params)
+    # @properties = @q.result(distinct: true)
+    # render json: @properties
+    ActsAsTenant.current_tenant = current_user.company
+    begin
+      es_resonse = PropertySearchService.search(search_params, current_user.company_id)
+      @properties = es_resonse.records
+      render json: @properties
+    rescue StandardError => e
+      Rails.logger.error "Elasticsearch search failed: #{e.message}"
+      @q = Property.ransack(search_params)
+      @properties = @q.result(distinct: true)
+      render json: @properties
+    end
   end
 
   def add_images
@@ -60,8 +71,8 @@ class Api::V1::PropertiesController < ApplicationController
   private
 
   def search_params
-    params.fetch(:q, {}).permit(:title_cont, :city_eq, :price_gteq, :price_lteq, :property_type_eq, :bedrooms_gteq,
-                                :state_eq)
+    params.fetch(:q, {}).permit(:title_cont, :city_eq, :price_gteq, :price_lteq, :property_type_eq, :bedrooms_gteq, :min_price, :max_price, :bedrooms_min, :bedrooms_max,
+                                :bathrooms_min, :sqft_min, :year_built_min, :lat, :lng, :radius, :sort_by, :state_eq)
   end
 
   def set_property

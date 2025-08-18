@@ -3,8 +3,11 @@ source "https://rubygems.org"
 
 gem "acts_as_tenant"
 gem "annotate"
-gem "happy_gemfile"
 
+gem 'elasticsearch-rails'
+gem 'elasticsearch-model'
+
+gem "happy_gemfile"
 gem "devise"
 gem "devise-jwt"
 gem "pundit"

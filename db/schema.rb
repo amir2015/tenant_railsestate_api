@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_08_14_201600) do
+ActiveRecord::Schema[7.2].define(version: 2025_08_18_214807) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -69,7 +69,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_08_14_201600) do
     t.string "title", null: false
     t.text "description"
     t.string "property_type"
-    t.string "listing_type", default: "sale", null: false
+    t.string "listing_type", default: "sell", null: false
     t.decimal "price", precision: 15, scale: 2, null: false
     t.string "address", null: false
     t.string "city", null: false

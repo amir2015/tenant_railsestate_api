@@ -21,8 +21,8 @@ class Property < ApplicationRecord
 
   geocoded_by :full_address
   after_validation :geocode, if: lambda { |obj|
-    obj.address.present? && (obj.address_changed? || obj.city_changed? || obj.state_changed? || obj.zip_code_changed?)
-  }
+              obj.address.present? && (obj.address_changed? || obj.city_changed? || obj.state_changed? || obj.zip_code_changed?)
+            }
 
   # Methods
   def full_address
@@ -45,5 +45,36 @@ class Property < ApplicationRecord
 
   def self.ransackable_associations(_auth_object = nil)
     []
+  end
+  # Elasticsearch Integeration
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
+
+  index_name "properties"
+  settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+    mapping dynamic: false do
+      indexes :listing_type, type: "keyword"
+      indexes :status, type: "keyword"
+      indexes :bedrooms, type: "integer"
+      indexes :price, type: "float"
+      indexes :title, type: "text", analyzer: "english"
+      indexes :description, type: "text", analyzer: "english"
+      indexes :property_type, type: "keyword"
+      indexes :bathrooms, type: "integer"
+      indexes :square_feet, type: "integer"
+      indexes :lot_size, type: "scaled_float", scaling_factor: 100
+      indexes :year_built, type: "integer"
+      indexes :city, type: "text", analyzer: "simple"
+      indexes :state, type: "keyword"
+    end
+  end
+
+  def as_indexed_json(options = {})
+    as_json(
+      only: %i[
+        id title description address city state zip_code,:listing_type
+        status property_type price bedrooms bathrooms square_feet
+      ]
+    )
   end
 end
